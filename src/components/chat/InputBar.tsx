@@ -18,6 +18,7 @@ import { Attachment } from '@/types';
 
 export function InputBar() {
   const {
+    theme,
     sendMessage,
     stopGeneration,
     isStreaming,
@@ -33,6 +34,8 @@ export function InputBar() {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
+
+  const isLight = theme === 'light';
 
   // Auto-resize textarea
   useEffect(() => {
@@ -85,28 +88,50 @@ export function InputBar() {
   };
 
   return (
-    <div className="p-4 bg-gradient-to-t from-[#07090e] via-[#07090e]/90 to-transparent shrink-0">
-      <div className="max-w-3xl mx-auto flex flex-col rounded-2xl border border-slate-800/80 bg-slate-900/80 backdrop-blur-2xl shadow-2xl p-2.5 transition-all focus-within:border-blue-500/50 focus-within:ring-1 focus-within:ring-blue-500/20">
+    <div
+      className={`p-4 shrink-0 transition-colors ${
+        isLight
+          ? 'bg-gradient-to-t from-[#ffffff] via-[#ffffff]/90 to-transparent'
+          : 'bg-gradient-to-t from-[#000000] via-[#000000]/90 to-transparent'
+      }`}
+    >
+      <div
+        className={`max-w-3xl mx-auto flex flex-col rounded-2xl border backdrop-blur-2xl shadow-2xl p-2.5 transition-all ${
+          isLight
+            ? 'bg-[#ffffff] border-amber-500/30 shadow-amber-500/10 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-500/20'
+            : 'bg-[#080808] border-white/[0.12] shadow-black focus-within:border-white/30 focus-within:ring-1 focus-within:ring-white/10'
+        }`}
+      >
         {/* Attachment chips */}
         {attachments.length > 0 && (
-          <div className="flex flex-wrap gap-2 px-2 pt-1 pb-2 border-b border-slate-800/80 mb-2">
+          <div
+            className={`flex flex-wrap gap-2 px-2 pt-1 pb-2 border-b mb-2 ${
+              isLight ? 'border-amber-500/20' : 'border-white/[0.08]'
+            }`}
+          >
             {attachments.map((att) => (
               <div
                 key={att.id}
-                className="flex items-center gap-2 rounded-xl bg-slate-800 px-2.5 py-1 text-xs text-slate-200 border border-slate-700"
+                className={`flex items-center gap-2 rounded-xl px-2.5 py-1 text-xs border ${
+                  isLight
+                    ? 'bg-amber-50 text-amber-900 border-amber-300'
+                    : 'bg-[#151515] text-zinc-200 border-white/10'
+                }`}
               >
                 {att.type === 'image' ? (
-                  <ImageIcon className="h-3.5 w-3.5 text-blue-400" />
+                  <ImageIcon className={`h-3.5 w-3.5 ${isLight ? 'text-amber-600' : 'text-zinc-300'}`} />
                 ) : (
-                  <FileText className="h-3.5 w-3.5 text-purple-400" />
+                  <FileText className={`h-3.5 w-3.5 ${isLight ? 'text-amber-600' : 'text-zinc-300'}`} />
                 )}
                 <span className="max-w-[140px] truncate font-medium">{att.name}</span>
-                <span className="text-[10px] text-slate-500 font-mono">
+                <span className={`text-[10px] font-mono ${isLight ? 'text-amber-700/70' : 'text-zinc-500'}`}>
                   {(att.size / 1024).toFixed(0)}KB
                 </span>
                 <button
                   onClick={() => removeAttachment(att.id)}
-                  className="rounded-full p-0.5 hover:bg-slate-700 text-slate-400 hover:text-white"
+                  className={`rounded-full p-0.5 ${
+                    isLight ? 'hover:bg-amber-200 text-amber-800' : 'hover:bg-white/10 text-zinc-400 hover:text-white'
+                  }`}
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -121,9 +146,13 @@ export function InputBar() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ask Zenix anything, code, synthesize documents, or research web..."
+          placeholder="Ask Zenix anything, code in Tanglish/English, synthesize documents, or research web..."
           rows={1}
-          className="w-full bg-transparent px-3 py-1.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none resize-none leading-relaxed min-h-[44px]"
+          className={`w-full bg-transparent px-3 py-1.5 text-sm focus:outline-none resize-none leading-relaxed min-h-[44px] ${
+            isLight
+              ? 'text-zinc-900 placeholder-zinc-400'
+              : 'text-white placeholder-zinc-500'
+          }`}
         />
 
         {/* Toolbar & Buttons */}
@@ -141,7 +170,11 @@ export function InputBar() {
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="rounded-xl p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+              className={`rounded-xl p-2 transition-colors ${
+                isLight
+                  ? 'text-zinc-500 hover:bg-amber-50 hover:text-amber-800'
+                  : 'text-zinc-400 hover:bg-[#151515] hover:text-white'
+              }`}
               title="Upload Documents (PDF, DOCX, TXT, CSV)"
             >
               <Paperclip className="h-4 w-4" />
@@ -158,7 +191,11 @@ export function InputBar() {
             />
             <button
               onClick={() => imageInputRef.current?.click()}
-              className="rounded-xl p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+              className={`rounded-xl p-2 transition-colors ${
+                isLight
+                  ? 'text-zinc-500 hover:bg-amber-50 hover:text-amber-800'
+                  : 'text-zinc-400 hover:bg-[#151515] hover:text-white'
+              }`}
               title="Upload Image for OCR & Vision analysis"
             >
               <ImageIcon className="h-4 w-4" />
@@ -167,7 +204,11 @@ export function InputBar() {
             {/* Voice Assistant Modal Button */}
             <button
               onClick={() => setActiveModal('voice')}
-              className="rounded-xl p-2 text-slate-400 hover:bg-slate-800 hover:text-blue-400 transition-colors"
+              className={`rounded-xl p-2 transition-colors ${
+                isLight
+                  ? 'text-zinc-500 hover:bg-amber-50 hover:text-amber-800'
+                  : 'text-zinc-400 hover:bg-[#151515] hover:text-white'
+              }`}
               title="Launch Neural Voice Mode"
             >
               <Mic className="h-4 w-4" />
@@ -178,8 +219,12 @@ export function InputBar() {
               onClick={() => setWebSearchEnabled((prev) => !prev)}
               className={`flex items-center gap-1.5 rounded-xl px-2.5 py-1 text-xs transition-all ${
                 webSearchEnabled
-                  ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
-                  : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                  ? isLight
+                    ? 'bg-amber-100 text-amber-900 border border-amber-400 font-semibold'
+                    : 'bg-white/15 text-white border border-white/25'
+                  : isLight
+                  ? 'text-zinc-500 hover:bg-amber-50 hover:text-zinc-900'
+                  : 'text-zinc-400 hover:bg-[#151515] hover:text-white'
               }`}
               title="Toggle Live Web Citations"
             >
@@ -190,7 +235,11 @@ export function InputBar() {
             {/* Prompt library button */}
             <button
               onClick={() => setActiveModal('prompts')}
-              className="rounded-xl p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+              className={`rounded-xl p-2 transition-colors ${
+                isLight
+                  ? 'text-zinc-500 hover:bg-amber-50 hover:text-amber-800'
+                  : 'text-zinc-400 hover:bg-[#151515] hover:text-white'
+              }`}
               title="Open Prompt Library"
             >
               <Sparkles className="h-4 w-4" />
@@ -213,8 +262,12 @@ export function InputBar() {
                 disabled={!input.trim() && attachments.length === 0}
                 className={`flex h-8 w-8 items-center justify-center rounded-xl font-bold transition-all shadow-md active:scale-95 ${
                   input.trim() || attachments.length > 0
-                    ? 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-blue-500/25 hover:from-blue-500 hover:to-indigo-500'
-                    : 'bg-slate-800 text-slate-600 cursor-not-allowed'
+                    ? isLight
+                      ? 'bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-600 text-white shadow-amber-500/30 hover:opacity-90'
+                      : 'bg-white text-black font-extrabold shadow-white/20 hover:bg-zinc-200'
+                    : isLight
+                    ? 'bg-amber-100 text-amber-300 cursor-not-allowed'
+                    : 'bg-[#151515] text-zinc-600 cursor-not-allowed'
                 }`}
                 title="Send message"
               >
@@ -225,10 +278,11 @@ export function InputBar() {
         </div>
       </div>
       <div className="text-center mt-2">
-        <p className="text-[10px] text-slate-500 font-mono">
-          Zenix AI combines Claude-style reasoning with DeepSeek code generation and live citations.
+        <p className={`text-[10px] font-mono ${isLight ? 'text-zinc-500' : 'text-zinc-500'}`}>
+          Zenix AI combines multi-model intelligence with Tanglish support, live citations & instant artifacts.
         </p>
       </div>
     </div>
   );
 }
+

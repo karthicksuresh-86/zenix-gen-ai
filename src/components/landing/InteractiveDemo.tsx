@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 
 export function InteractiveDemo() {
-  const { createNewChat } = useApp();
+  const { createNewChat, theme } = useApp();
   const [selectedDemo, setSelectedDemo] = useState<'coding' | 'citations' | 'rag'>('coding');
 
   const demos = {
@@ -82,29 +82,53 @@ Recommendation: Ingest PDF or Markdown documents directly into Zenix RAG store f
   return (
     <section className="py-20 px-4 max-w-6xl mx-auto">
       <div className="text-center mb-12">
-        <div className="inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-950/30 px-4 py-1 text-xs font-semibold text-purple-300 mb-3">
-          <Terminal className="h-3.5 w-3.5" />
+        <div className={`inline-flex items-center gap-2 rounded-full border px-4 py-1 text-xs font-semibold mb-3 ${
+          theme === 'light'
+            ? 'border-amber-300/80 bg-amber-100 text-amber-900 shadow-sm'
+            : 'border-zinc-800 bg-zinc-950 text-zinc-300 shadow-black'
+        }`}>
+          <Terminal className={`h-3.5 w-3.5 ${theme === 'light' ? 'text-amber-600' : 'text-zinc-400'}`} />
           <span>Interactive Capabilities Sandbox</span>
         </div>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h2 className={`text-3xl sm:text-4xl font-extrabold tracking-tight ${
+          theme === 'light' ? 'text-stone-900' : 'text-white'
+        }`}>
           Experience the Multi-Model Advantage
         </h2>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto mt-2">
+        <p className={`text-xs sm:text-sm max-w-xl mx-auto mt-2 ${
+          theme === 'light' ? 'text-stone-600' : 'text-zinc-400'
+        }`}>
           Toggle between code generation, web citations, and vector RAG retrieval in real-time.
         </p>
       </div>
 
-      <div className="rounded-3xl border border-slate-800 bg-slate-950/80 shadow-2xl overflow-hidden glass-card">
+      <div className={`rounded-3xl border shadow-2xl overflow-hidden transition-colors ${
+        theme === 'light'
+          ? 'border-amber-200/80 bg-white shadow-amber-500/5'
+          : 'border-zinc-800 bg-zinc-950 shadow-black'
+      }`}>
         {/* Top Control Bar */}
-        <div className="flex flex-wrap items-center justify-between border-b border-slate-800/80 px-6 py-4 bg-slate-900/60 gap-3">
+        <div className={`flex flex-wrap items-center justify-between border-b px-6 py-4 gap-3 ${
+          theme === 'light'
+            ? 'border-amber-200/80 bg-amber-50/60'
+            : 'border-zinc-800 bg-black/70'
+        }`}>
           {/* Mode Switcher */}
-          <div className="flex items-center gap-1.5 bg-slate-950/80 p-1 rounded-xl border border-slate-800/60">
+          <div className={`flex items-center gap-1.5 p-1 rounded-xl border ${
+            theme === 'light'
+              ? 'bg-white border-amber-200/80'
+              : 'bg-zinc-950 border-zinc-800'
+          }`}>
             <button
               onClick={() => setSelectedDemo('coding')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 selectedDemo === 'coding'
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  ? theme === 'light'
+                    ? 'gold-gradient text-white shadow-sm'
+                    : 'bg-white text-black font-bold shadow-sm'
+                  : theme === 'light'
+                    ? 'text-stone-600 hover:text-stone-900'
+                    : 'text-zinc-400 hover:text-white'
               }`}
             >
               <Code2 className="h-3.5 w-3.5" />
@@ -114,8 +138,12 @@ Recommendation: Ingest PDF or Markdown documents directly into Zenix RAG store f
               onClick={() => setSelectedDemo('citations')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 selectedDemo === 'citations'
-                  ? 'bg-purple-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  ? theme === 'light'
+                    ? 'gold-gradient text-white shadow-sm'
+                    : 'bg-white text-black font-bold shadow-sm'
+                  : theme === 'light'
+                    ? 'text-stone-600 hover:text-stone-900'
+                    : 'text-zinc-400 hover:text-white'
               }`}
             >
               <Globe className="h-3.5 w-3.5" />
@@ -125,8 +153,12 @@ Recommendation: Ingest PDF or Markdown documents directly into Zenix RAG store f
               onClick={() => setSelectedDemo('rag')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 selectedDemo === 'rag'
-                  ? 'bg-cyan-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  ? theme === 'light'
+                    ? 'gold-gradient text-white shadow-sm'
+                    : 'bg-white text-black font-bold shadow-sm'
+                  : theme === 'light'
+                    ? 'text-stone-600 hover:text-stone-900'
+                    : 'text-zinc-400 hover:text-white'
               }`}
             >
               <Sparkles className="h-3.5 w-3.5" />
@@ -135,12 +167,20 @@ Recommendation: Ingest PDF or Markdown documents directly into Zenix RAG store f
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-slate-800 border border-slate-700 px-3 py-1 text-[11px] font-mono text-emerald-400">
+            <span className={`rounded-full border px-3 py-1 text-[11px] font-mono font-bold ${
+              theme === 'light'
+                ? 'bg-amber-100 border-amber-300 text-amber-900'
+                : 'bg-zinc-900 border-zinc-800 text-zinc-300'
+            }`}>
               {current.badge}
             </span>
             <button
               onClick={() => createNewChat(current.prompt)}
-              className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-1.5 text-xs font-semibold text-white hover:from-blue-500 hover:to-indigo-500 transition-all shadow-md shadow-blue-500/20"
+              className={`flex items-center gap-1.5 rounded-xl px-4 py-1.5 text-xs font-bold transition-all shadow-md active:scale-95 ${
+                theme === 'light'
+                  ? 'gold-gradient text-white shadow-amber-500/20 hover:brightness-105'
+                  : 'bg-white hover:bg-zinc-200 text-black shadow-zinc-900/50'
+              }`}
             >
               <Play className="h-3.5 w-3.5 fill-current" />
               <span>Run in Full Workspace</span>
@@ -149,14 +189,24 @@ Recommendation: Ingest PDF or Markdown documents directly into Zenix RAG store f
         </div>
 
         {/* User Prompt Bar */}
-        <div className="px-6 py-3 border-b border-slate-800/80 bg-slate-900/30 text-xs font-mono text-slate-300 flex items-center gap-2">
-          <span className="text-blue-400 font-bold">$ prompt:</span>
+        <div className={`px-6 py-3 border-b text-xs font-mono flex items-center gap-2 ${
+          theme === 'light'
+            ? 'border-amber-200/80 bg-stone-50 text-stone-700'
+            : 'border-zinc-800 bg-zinc-950 text-zinc-400'
+        }`}>
+          <span className={`font-bold ${theme === 'light' ? 'text-amber-800' : 'text-zinc-200'}`}>$ prompt:</span>
           <span>"{current.prompt}"</span>
         </div>
 
         {/* Output Area */}
-        <div className="p-6 bg-[#07090e] font-mono text-xs text-slate-200 overflow-x-auto min-h-[220px]">
-          <pre className="whitespace-pre-wrap leading-relaxed text-blue-200/90 font-mono">
+        <div className={`p-6 font-mono text-xs overflow-x-auto min-h-[220px] ${
+          theme === 'light'
+            ? 'bg-white text-stone-800'
+            : 'bg-black text-zinc-200'
+        }`}>
+          <pre className={`whitespace-pre-wrap leading-relaxed font-mono ${
+            theme === 'light' ? 'text-amber-950/90' : 'text-zinc-300'
+          }`}>
             {current.response}
           </pre>
         </div>

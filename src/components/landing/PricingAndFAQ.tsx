@@ -5,7 +5,7 @@ import { useApp } from '@/lib/store';
 import { Check, ChevronDown, ChevronUp, HelpCircle, Shield, Sparkles, Zap } from 'lucide-react';
 
 export function PricingAndFAQ() {
-  const { setCurrentView, setActiveModal } = useApp();
+  const { setCurrentView, setActiveModal, theme } = useApp();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const plans = [
@@ -80,14 +80,22 @@ export function PricingAndFAQ() {
     <section className="py-24 px-4 max-w-6xl mx-auto">
       {/* Pricing Section */}
       <div className="text-center mb-16">
-        <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-950/30 px-4 py-1 text-xs font-semibold text-blue-300 mb-3">
-          <Zap className="h-3.5 w-3.5" />
+        <div className={`inline-flex items-center gap-2 rounded-full border px-4 py-1 text-xs font-semibold mb-3 ${
+          theme === 'light'
+            ? 'border-amber-300/80 bg-amber-100 text-amber-900 shadow-sm'
+            : 'border-zinc-800 bg-zinc-950 text-zinc-300 shadow-black'
+        }`}>
+          <Zap className={`h-3.5 w-3.5 ${theme === 'light' ? 'text-amber-600' : 'text-zinc-400'}`} />
           <span>Transparent Pricing</span>
         </div>
-        <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+        <h2 className={`text-3xl sm:text-5xl font-black tracking-tight ${
+          theme === 'light' ? 'text-stone-900' : 'text-white'
+        }`}>
           Choose Your Intelligence Tier
         </h2>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto mt-3">
+        <p className={`text-xs sm:text-sm max-w-xl mx-auto mt-3 ${
+          theme === 'light' ? 'text-stone-600' : 'text-zinc-400'
+        }`}>
           Transparent, predictable pricing with zero hidden fees.
         </p>
       </div>
@@ -96,31 +104,41 @@ export function PricingAndFAQ() {
         {plans.map((p, idx) => (
           <div
             key={idx}
-            className={`relative flex flex-col justify-between rounded-3xl p-8 glass-card border transition-all duration-300 ${
+            className={`relative flex flex-col justify-between rounded-3xl p-8 border transition-all duration-300 ${
               p.popular
-                ? 'border-blue-500/50 bg-slate-900/90 shadow-2xl shadow-blue-500/10 scale-105 z-10'
-                : 'border-slate-800 bg-slate-950/60'
+                ? theme === 'light'
+                  ? 'border-amber-400 bg-white shadow-xl shadow-amber-500/10 scale-105 z-10'
+                  : 'border-zinc-600 bg-zinc-950 shadow-2xl shadow-black scale-105 z-10'
+                : theme === 'light'
+                  ? 'border-amber-200/80 bg-white/80 shadow-md'
+                  : 'border-zinc-900 bg-zinc-950'
             }`}
           >
             {p.popular && (
-              <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-1 text-xs font-bold text-white shadow-md">
+              <span className={`absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-xs font-bold shadow-md ${
+                theme === 'light'
+                  ? 'gold-gradient text-white shadow-amber-500/20'
+                  : 'bg-white text-black shadow-zinc-800'
+              }`}>
                 MOST POPULAR
               </span>
             )}
 
             <div>
-              <h3 className="text-lg font-bold text-white mb-1">{p.name}</h3>
-              <p className="text-xs text-slate-400 mb-6 leading-relaxed">{p.description}</p>
+              <h3 className={`text-lg font-bold mb-1 ${theme === 'light' ? 'text-stone-900' : 'text-white'}`}>{p.name}</h3>
+              <p className={`text-xs mb-6 leading-relaxed ${theme === 'light' ? 'text-stone-600' : 'text-zinc-400'}`}>{p.description}</p>
 
               <div className="flex items-baseline gap-1 mb-6">
-                <span className="text-4xl font-black text-white tracking-tight">{p.price}</span>
-                <span className="text-xs text-slate-500 font-medium">/{p.period}</span>
+                <span className={`text-4xl font-black tracking-tight ${theme === 'light' ? 'text-stone-900' : 'text-white'}`}>{p.price}</span>
+                <span className={`text-xs font-medium ${theme === 'light' ? 'text-stone-500' : 'text-zinc-500'}`}>/{p.period}</span>
               </div>
 
               <div className="space-y-3 mb-8">
                 {p.features.map((feat, fIdx) => (
-                  <div key={fIdx} className="flex items-start gap-2.5 text-xs text-slate-300">
-                    <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <div key={fIdx} className={`flex items-start gap-2.5 text-xs ${
+                    theme === 'light' ? 'text-stone-700' : 'text-zinc-300'
+                  }`}>
+                    <Check className={`h-4 w-4 shrink-0 mt-0.5 ${theme === 'light' ? 'text-amber-600' : 'text-emerald-400'}`} />
                     <span>{feat}</span>
                   </div>
                 ))}
@@ -135,10 +153,14 @@ export function PricingAndFAQ() {
                   setCurrentView('chat');
                 }
               }}
-              className={`w-full py-3 rounded-2xl text-xs font-bold transition-all shadow-lg ${
+              className={`w-full py-3 rounded-2xl text-xs font-bold transition-all shadow-md active:scale-95 ${
                 p.popular
-                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-blue-500/25'
-                  : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+                  ? theme === 'light'
+                    ? 'gold-gradient text-white shadow-amber-500/20 hover:brightness-105'
+                    : 'bg-white hover:bg-zinc-200 text-black shadow-zinc-900/50'
+                  : theme === 'light'
+                    ? 'bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-200'
+                    : 'bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800'
               }`}
             >
               {p.cta}
@@ -150,11 +172,17 @@ export function PricingAndFAQ() {
       {/* FAQ Section */}
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-950/30 px-4 py-1 text-xs font-semibold text-purple-300 mb-3">
-            <HelpCircle className="h-3.5 w-3.5" />
+          <div className={`inline-flex items-center gap-2 rounded-full border px-4 py-1 text-xs font-semibold mb-3 ${
+            theme === 'light'
+              ? 'border-amber-300/80 bg-amber-100 text-amber-900 shadow-sm'
+              : 'border-zinc-800 bg-zinc-950 text-zinc-300 shadow-black'
+          }`}>
+            <HelpCircle className={`h-3.5 w-3.5 ${theme === 'light' ? 'text-amber-600' : 'text-zinc-400'}`} />
             <span>Frequently Asked Questions</span>
           </div>
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+          <h2 className={`text-2xl sm:text-4xl font-extrabold tracking-tight ${
+            theme === 'light' ? 'text-stone-900' : 'text-white'
+          }`}>
             Everything You Need to Know
           </h2>
         </div>
@@ -165,17 +193,33 @@ export function PricingAndFAQ() {
             return (
               <div
                 key={idx}
-                className="rounded-2xl border border-slate-800/80 bg-slate-900/60 overflow-hidden glass-card transition-all"
+                className={`rounded-2xl border overflow-hidden transition-all ${
+                  theme === 'light'
+                    ? 'border-amber-200/80 bg-white shadow-sm'
+                    : 'border-zinc-900 bg-zinc-950 shadow-black'
+                }`}
               >
                 <button
                   onClick={() => setOpenFaq(isOpen ? null : idx)}
-                  className="flex items-center justify-between w-full p-5 text-left text-sm font-bold text-white hover:text-blue-300 transition-colors"
+                  className={`flex items-center justify-between w-full p-5 text-left text-sm font-bold transition-colors ${
+                    theme === 'light'
+                      ? 'text-stone-900 hover:text-amber-800'
+                      : 'text-white hover:text-zinc-300'
+                  }`}
                 >
                   <span>{faq.q}</span>
-                  {isOpen ? <ChevronUp className="h-4 w-4 shrink-0 text-blue-400" /> : <ChevronDown className="h-4 w-4 shrink-0 text-slate-500" />}
+                  {isOpen ? (
+                    <ChevronUp className={`h-4 w-4 shrink-0 ${theme === 'light' ? 'text-amber-600' : 'text-zinc-300'}`} />
+                  ) : (
+                    <ChevronDown className={`h-4 w-4 shrink-0 ${theme === 'light' ? 'text-stone-400' : 'text-zinc-600'}`} />
+                  )}
                 </button>
                 {isOpen && (
-                  <div className="px-5 pb-5 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-slate-800/40 pt-3">
+                  <div className={`px-5 pb-5 text-xs sm:text-sm leading-relaxed border-t pt-3 ${
+                    theme === 'light'
+                      ? 'border-amber-100 text-stone-600'
+                      : 'border-zinc-900 text-zinc-400'
+                  }`}>
                     {faq.a}
                   </div>
                 )}

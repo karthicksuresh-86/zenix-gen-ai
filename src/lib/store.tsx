@@ -10,6 +10,7 @@ import {
   ModelId,
   ModeId,
   PromptTemplate,
+  ThemeMode,
   UserMemory,
   UserProfile,
 } from '@/types';
@@ -35,6 +36,9 @@ type ModalType =
   | null;
 
 interface AppContextType {
+  theme: ThemeMode;
+  setTheme: (theme: ThemeMode) => void;
+  toggleTheme: () => void;
   currentView: 'landing' | 'chat';
   setCurrentView: (view: 'landing' | 'chat') => void;
   sessions: ChatSession[];
@@ -95,6 +99,7 @@ const DEFAULT_USER: UserProfile = {
 };
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setThemeState] = useState<ThemeMode>('dark');
   const [currentView, setCurrentView] = useState<'landing' | 'chat'>('landing');
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
@@ -112,6 +117,37 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [activeModal, setActiveModal] = useState<ModalType>(null);
 
   const abortControllerRef = useRef<boolean>(false);
+
+  // Sync theme with DOM and localStorage
+  useEffect(() => {
+    try {
+      const savedTheme = localStorage.getItem('zenix_theme') as ThemeMode;
+      if (savedTheme === 'light' || savedTheme === 'dark') {
+        setThemeState(savedTheme);
+        document.documentElement.classList.remove('dark', 'light');
+        document.documentElement.classList.add(savedTheme);
+      } else {
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+      }
+    } catch {
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+
+  const setTheme = (newTheme: ThemeMode) => {
+    setThemeState(newTheme);
+    try {
+      localStorage.setItem('zenix_theme', newTheme);
+    } catch {}
+    document.documentElement.classList.remove('dark', 'light');
+    document.documentElement.classList.add(newTheme);
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
 
   // Load from localStorage on client mount
   useEffect(() => {
@@ -516,6 +552,9 @@ Feel free to choose a model, switch modes, or ask anything!`,
   return (
     <AppContext.Provider
       value={{
+        theme,
+        setTheme,
+        toggleTheme,
         currentView,
         setCurrentView,
         sessions,

@@ -11,11 +11,13 @@ import {
   Database,
   MessageSquare,
   MessageSquarePlus,
+  Moon,
   Pin,
   Plus,
   Search,
   Settings,
   Sparkles,
+  Sun,
   Trash2,
   User,
   Zap,
@@ -23,6 +25,8 @@ import {
 
 export function Sidebar() {
   const {
+    theme,
+    toggleTheme,
     sessions,
     currentSessionId,
     selectSession,
@@ -37,6 +41,8 @@ export function Sidebar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  const isLight = theme === 'light';
+
   const filteredSessions = sessions.filter((s) =>
     s.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -48,11 +54,21 @@ export function Sidebar() {
 
   if (isCollapsed) {
     return (
-      <div className="flex flex-col items-center justify-between h-full w-16 border-r border-slate-800/80 bg-[#07090e]/95 py-4 shrink-0 transition-all z-20">
+      <div
+        className={`flex flex-col items-center justify-between h-full w-16 border-r py-4 shrink-0 transition-all z-20 ${
+          isLight
+            ? 'border-amber-500/20 bg-[#faf8f5]'
+            : 'border-white/[0.08] bg-[#000000]'
+        }`}
+      >
         <div className="flex flex-col items-center gap-4">
           <button
             onClick={() => setCurrentView('landing')}
-            className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 font-bold text-white shadow-lg shadow-blue-500/25 hover:scale-105 transition-transform"
+            className={`flex h-10 w-10 items-center justify-center rounded-xl font-bold text-white shadow-lg transition-transform hover:scale-105 ${
+              isLight
+                ? 'bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-500 shadow-amber-500/20'
+                : 'bg-white text-black font-black shadow-white/10'
+            }`}
             title="Zenix AI Home"
           >
             Z
@@ -60,7 +76,11 @@ export function Sidebar() {
 
           <button
             onClick={() => createNewChat()}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30 hover:bg-blue-600 hover:text-white transition-all"
+            className={`flex h-9 w-9 items-center justify-center rounded-xl border transition-all ${
+              isLight
+                ? 'bg-amber-100 text-amber-900 border-amber-400 hover:bg-amber-600 hover:text-white'
+                : 'bg-white/10 text-white border-white/20 hover:bg-white hover:text-black'
+            }`}
             title="New Chat"
           >
             <Plus className="h-5 w-5" />
@@ -68,7 +88,11 @@ export function Sidebar() {
 
           <button
             onClick={() => setActiveModal('knowledge')}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-purple-400 transition-all"
+            className={`flex h-9 w-9 items-center justify-center rounded-xl transition-all ${
+              isLight
+                ? 'bg-white text-zinc-700 border border-amber-500/20 hover:text-amber-600'
+                : 'bg-[#0a0a0a] text-zinc-400 border border-white/[0.08] hover:text-white'
+            }`}
             title="RAG Knowledge Base"
           >
             <Database className="h-4 w-4" />
@@ -76,7 +100,11 @@ export function Sidebar() {
 
           <button
             onClick={() => setActiveModal('prompts')}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-blue-400 transition-all"
+            className={`flex h-9 w-9 items-center justify-center rounded-xl transition-all ${
+              isLight
+                ? 'bg-white text-zinc-700 border border-amber-500/20 hover:text-amber-600'
+                : 'bg-[#0a0a0a] text-zinc-400 border border-white/[0.08] hover:text-white'
+            }`}
             title="Prompt Library"
           >
             <Sparkles className="h-4 w-4" />
@@ -84,25 +112,35 @@ export function Sidebar() {
 
           <button
             onClick={() => setActiveModal('memory')}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-cyan-400 transition-all"
+            className={`flex h-9 w-9 items-center justify-center rounded-xl transition-all ${
+              isLight
+                ? 'bg-white text-zinc-700 border border-amber-500/20 hover:text-amber-600'
+                : 'bg-[#0a0a0a] text-zinc-400 border border-white/[0.08] hover:text-white'
+            }`}
             title="Memory Vault"
           >
             <Brain className="h-4 w-4" />
           </button>
 
           <button
-            onClick={() => setActiveModal('admin')}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-indigo-400 transition-all"
-            title="Admin Dashboard"
+            onClick={toggleTheme}
+            className={`flex h-9 w-9 items-center justify-center rounded-xl border transition-all ${
+              isLight
+                ? 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
+                : 'bg-[#0a0a0a] text-zinc-300 border-white/[0.1] hover:text-white'
+            }`}
+            title={isLight ? 'Switch to Plain Black' : 'Switch to Bright Gold'}
           >
-            <Activity className="h-4 w-4" />
+            {isLight ? <Sun className="h-4 w-4 text-amber-600" /> : <Moon className="h-4 w-4" />}
           </button>
         </div>
 
         <div className="flex flex-col items-center gap-3">
           <button
             onClick={() => setIsCollapsed(false)}
-            className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-800 hover:text-white transition-colors"
+            className={`rounded-lg p-1.5 transition-colors ${
+              isLight ? 'text-zinc-500 hover:bg-amber-100 hover:text-zinc-950' : 'text-zinc-500 hover:bg-zinc-900 hover:text-white'
+            }`}
             title="Expand Sidebar"
           >
             <ChevronRight className="h-4 w-4" />
@@ -110,7 +148,11 @@ export function Sidebar() {
 
           <button
             onClick={() => setActiveModal('auth')}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 text-slate-300 hover:ring-2 hover:ring-blue-500 transition-all"
+            className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${
+              isLight
+                ? 'bg-amber-200 text-amber-950 ring-1 ring-amber-400'
+                : 'bg-zinc-800 text-white ring-1 ring-white/20'
+            }`}
             title="User Profile"
           >
             <User className="h-4 w-4" />
@@ -121,7 +163,13 @@ export function Sidebar() {
   }
 
   return (
-    <div className="flex flex-col justify-between h-full w-72 lg:w-80 border-r border-slate-800/80 bg-[#07090e]/95 backdrop-blur-2xl p-4 shrink-0 select-none transition-all z-20">
+    <div
+      className={`flex flex-col justify-between h-full w-72 lg:w-80 border-r p-4 shrink-0 select-none transition-all z-20 ${
+        isLight
+          ? 'border-amber-500/20 bg-[#faf8f5] text-zinc-900'
+          : 'border-white/[0.08] bg-[#000000] text-white'
+      }`}
+    >
       {/* Top Brand & Actions */}
       <div className="flex flex-col space-y-4">
         {/* Brand Header */}
@@ -130,23 +178,47 @@ export function Sidebar() {
             onClick={() => setCurrentView('landing')}
             className="flex items-center gap-2.5 cursor-pointer group"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 font-extrabold text-white text-base shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
+            <div
+              className={`flex h-9 w-9 items-center justify-center rounded-xl font-extrabold text-base shadow-lg transition-transform group-hover:scale-105 ${
+                isLight
+                  ? 'bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-500 text-white shadow-amber-500/25'
+                  : 'bg-white text-black font-black shadow-white/10'
+              }`}
+            >
               Z
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-white tracking-wide text-base">Zenix AI</span>
-                <span className="rounded bg-blue-500/20 px-1.5 py-0.2 text-[9px] font-bold text-blue-400 border border-blue-500/30">
+                <span
+                  className={`font-extrabold tracking-wide text-base ${
+                    isLight ? 'text-zinc-950' : 'text-white'
+                  }`}
+                >
+                  Zenix AI
+                </span>
+                <span
+                  className={`rounded px-1.5 py-0.2 text-[9px] font-bold border ${
+                    isLight
+                      ? 'bg-amber-500/15 text-amber-800 border-amber-500/30'
+                      : 'bg-white/10 text-white border-white/20'
+                  }`}
+                >
                   PRO
                 </span>
               </div>
-              <p className="text-[10px] text-slate-400 font-medium">Neural Intelligence Suite</p>
+              <p className={`text-[10px] font-medium ${isLight ? 'text-amber-800/80' : 'text-zinc-500'}`}>
+                Neural Intelligence Suite
+              </p>
             </div>
           </div>
 
           <button
             onClick={() => setIsCollapsed(true)}
-            className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-800 hover:text-white transition-colors"
+            className={`rounded-lg p-1.5 transition-colors ${
+              isLight
+                ? 'text-zinc-500 hover:bg-amber-100 hover:text-zinc-900'
+                : 'text-zinc-500 hover:bg-[#121212] hover:text-white'
+            }`}
             title="Collapse Sidebar"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -156,7 +228,11 @@ export function Sidebar() {
         {/* New Chat Button */}
         <button
           onClick={() => createNewChat()}
-          className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 hover:from-blue-500 to-indigo-600 hover:to-indigo-500 px-4 py-3 text-xs font-bold text-white shadow-lg shadow-blue-600/25 transition-all duration-200 active:scale-[0.98]"
+          className={`flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-xs font-bold shadow-lg transition-all duration-200 active:scale-[0.98] ${
+            isLight
+              ? 'bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 text-white shadow-amber-500/25 hover:opacity-95'
+              : 'bg-white text-black font-extrabold shadow-white/10 hover:bg-zinc-200'
+          }`}
         >
           <Plus className="h-4 w-4" />
           <span>Start New Chat</span>
@@ -164,13 +240,17 @@ export function Sidebar() {
 
         {/* Search Chats */}
         <div className="relative">
-          <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-500" />
+          <Search className={`absolute left-3 top-2.5 h-3.5 w-3.5 ${isLight ? 'text-amber-600/60' : 'text-zinc-500'}`} />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search conversations..."
-            className="w-full rounded-xl bg-slate-900/80 border border-slate-800/80 pl-8 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 transition-all"
+            className={`w-full rounded-xl pl-8 pr-3 py-2 text-xs transition-all focus:outline-none ${
+              isLight
+                ? 'bg-white border border-amber-500/25 text-zinc-900 placeholder-zinc-400 focus:border-amber-500'
+                : 'bg-[#080808] border border-white/[0.08] text-white placeholder-zinc-600 focus:border-white/30'
+            }`}
           />
         </div>
 
@@ -178,33 +258,49 @@ export function Sidebar() {
         <div className="grid grid-cols-2 gap-2 pt-1">
           <button
             onClick={() => setActiveModal('knowledge')}
-            className="flex items-center gap-2 rounded-xl bg-slate-900/60 border border-slate-800/60 px-3 py-2 text-xs text-slate-300 hover:bg-purple-950/30 hover:border-purple-500/40 hover:text-purple-300 transition-all"
+            className={`flex items-center gap-2 rounded-xl px-3 py-2 text-xs border transition-all ${
+              isLight
+                ? 'bg-white border-amber-500/20 text-zinc-800 hover:border-amber-500/50 hover:bg-amber-50'
+                : 'bg-[#080808] border-white/[0.08] text-zinc-300 hover:border-white/20 hover:bg-[#121212] hover:text-white'
+            }`}
           >
-            <Database className="h-3.5 w-3.5 text-purple-400" />
+            <Database className={`h-3.5 w-3.5 ${isLight ? 'text-amber-600' : 'text-zinc-300'}`} />
             <span className="truncate font-medium">RAG System</span>
           </button>
 
           <button
             onClick={() => setActiveModal('prompts')}
-            className="flex items-center gap-2 rounded-xl bg-slate-900/60 border border-slate-800/60 px-3 py-2 text-xs text-slate-300 hover:bg-blue-950/30 hover:border-blue-500/40 hover:text-blue-300 transition-all"
+            className={`flex items-center gap-2 rounded-xl px-3 py-2 text-xs border transition-all ${
+              isLight
+                ? 'bg-white border-amber-500/20 text-zinc-800 hover:border-amber-500/50 hover:bg-amber-50'
+                : 'bg-[#080808] border-white/[0.08] text-zinc-300 hover:border-white/20 hover:bg-[#121212] hover:text-white'
+            }`}
           >
-            <Sparkles className="h-3.5 w-3.5 text-blue-400" />
+            <Sparkles className={`h-3.5 w-3.5 ${isLight ? 'text-amber-600' : 'text-zinc-300'}`} />
             <span className="truncate font-medium">Prompts</span>
           </button>
 
           <button
             onClick={() => setActiveModal('memory')}
-            className="flex items-center gap-2 rounded-xl bg-slate-900/60 border border-slate-800/60 px-3 py-2 text-xs text-slate-300 hover:bg-cyan-950/30 hover:border-cyan-500/40 hover:text-cyan-300 transition-all"
+            className={`flex items-center gap-2 rounded-xl px-3 py-2 text-xs border transition-all ${
+              isLight
+                ? 'bg-white border-amber-500/20 text-zinc-800 hover:border-amber-500/50 hover:bg-amber-50'
+                : 'bg-[#080808] border-white/[0.08] text-zinc-300 hover:border-white/20 hover:bg-[#121212] hover:text-white'
+            }`}
           >
-            <Brain className="h-3.5 w-3.5 text-cyan-400" />
+            <Brain className={`h-3.5 w-3.5 ${isLight ? 'text-amber-600' : 'text-zinc-300'}`} />
             <span className="truncate font-medium">Memory Vault</span>
           </button>
 
           <button
             onClick={() => setActiveModal('admin')}
-            className="flex items-center gap-2 rounded-xl bg-slate-900/60 border border-slate-800/60 px-3 py-2 text-xs text-slate-300 hover:bg-indigo-950/30 hover:border-indigo-500/40 hover:text-indigo-300 transition-all"
+            className={`flex items-center gap-2 rounded-xl px-3 py-2 text-xs border transition-all ${
+              isLight
+                ? 'bg-white border-amber-500/20 text-zinc-800 hover:border-amber-500/50 hover:bg-amber-50'
+                : 'bg-[#080808] border-white/[0.08] text-zinc-300 hover:border-white/20 hover:bg-[#121212] hover:text-white'
+            }`}
           >
-            <Activity className="h-3.5 w-3.5 text-indigo-400" />
+            <Activity className={`h-3.5 w-3.5 ${isLight ? 'text-amber-600' : 'text-zinc-300'}`} />
             <span className="truncate font-medium">Telemetry</span>
           </button>
         </div>
@@ -215,8 +311,12 @@ export function Sidebar() {
         {/* Pinned Chats */}
         {pinnedSessions.length > 0 && (
           <div>
-            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-2 mb-1.5">
-              <Pin className="h-3 w-3 text-amber-400" />
+            <div
+              className={`flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider px-2 mb-1.5 ${
+                isLight ? 'text-amber-800' : 'text-zinc-500'
+              }`}
+            >
+              <Pin className="h-3 w-3 text-amber-500" />
               <span>Pinned Conversations</span>
             </div>
             <div className="space-y-1">
@@ -224,6 +324,7 @@ export function Sidebar() {
                 <SessionRow
                   key={s.id}
                   session={s}
+                  isLight={isLight}
                   isActive={s.id === currentSessionId}
                   onSelect={() => selectSession(s.id)}
                   onDelete={() => deleteSession(s.id)}
@@ -236,7 +337,11 @@ export function Sidebar() {
 
         {/* Recent Chats */}
         <div>
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-2 mb-1.5">
+          <div
+            className={`flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider px-2 mb-1.5 ${
+              isLight ? 'text-zinc-500' : 'text-zinc-500'
+            }`}
+          >
             <MessageSquare className="h-3 w-3" />
             <span>Recent Chats</span>
           </div>
@@ -245,6 +350,7 @@ export function Sidebar() {
               <SessionRow
                 key={s.id}
                 session={s}
+                isLight={isLight}
                 isActive={s.id === currentSessionId}
                 onSelect={() => selectSession(s.id)}
                 onDelete={() => deleteSession(s.id)}
@@ -252,7 +358,7 @@ export function Sidebar() {
               />
             ))}
             {unpinnedSessions.length === 0 && pinnedSessions.length === 0 && (
-              <div className="px-3 py-6 text-center text-xs text-slate-500">
+              <div className={`px-3 py-6 text-center text-xs ${isLight ? 'text-zinc-400' : 'text-zinc-600'}`}>
                 No matching conversations.
               </div>
             )}
@@ -261,20 +367,30 @@ export function Sidebar() {
       </div>
 
       {/* Bottom User Card & Usage Meter */}
-      <div className="border-t border-slate-800/80 pt-3 space-y-3">
+      <div className={`border-t pt-3 space-y-3 ${isLight ? 'border-amber-500/20' : 'border-white/[0.08]'}`}>
         {/* Usage Bar */}
-        <div className="rounded-xl bg-slate-900/60 border border-slate-800/60 p-2.5 text-xs">
-          <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1.5">
-            <span className="font-medium">Monthly Token Quota</span>
-            <span className="font-mono text-blue-400">{tokenPercent}%</span>
+        <div
+          className={`rounded-xl border p-2.5 text-xs ${
+            isLight
+              ? 'bg-white border-amber-500/20'
+              : 'bg-[#080808] border-white/[0.08]'
+          }`}
+        >
+          <div className="flex items-center justify-between text-[11px] mb-1.5">
+            <span className={`font-medium ${isLight ? 'text-zinc-700' : 'text-zinc-400'}`}>Monthly Quota</span>
+            <span className={`font-mono font-bold ${isLight ? 'text-amber-700' : 'text-white'}`}>{tokenPercent}%</span>
           </div>
-          <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+          <div className={`h-1.5 w-full rounded-full overflow-hidden ${isLight ? 'bg-amber-100' : 'bg-[#181818]'}`}>
             <div
-              className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all"
+              className={`h-full rounded-full transition-all ${
+                isLight
+                  ? 'bg-gradient-to-r from-amber-600 to-yellow-500'
+                  : 'bg-white'
+              }`}
               style={{ width: `${tokenPercent}%` }}
             />
           </div>
-          <div className="flex items-center justify-between text-[10px] text-slate-500 mt-1.5 font-mono">
+          <div className={`flex items-center justify-between text-[10px] mt-1.5 font-mono ${isLight ? 'text-zinc-500' : 'text-zinc-500'}`}>
             <span>{(userProfile.tokensUsedThisMonth / 1000).toFixed(0)}k used</span>
             <span>{(userProfile.tokenLimit / 1000).toFixed(0)}k limit</span>
           </div>
@@ -283,23 +399,33 @@ export function Sidebar() {
         {/* User Card */}
         <div
           onClick={() => setActiveModal('auth')}
-          className="flex items-center justify-between rounded-2xl bg-slate-900/80 border border-slate-800/80 p-2.5 hover:border-slate-700 cursor-pointer transition-all"
+          className={`flex items-center justify-between rounded-2xl border p-2.5 cursor-pointer transition-all ${
+            isLight
+              ? 'bg-white border-amber-500/25 hover:border-amber-500 hover:shadow-sm'
+              : 'bg-[#080808] border-white/[0.08] hover:border-white/20'
+          }`}
         >
           <div className="flex items-center gap-2.5 overflow-hidden">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 font-bold text-white text-xs">
+            <div
+              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl font-bold text-xs ${
+                isLight
+                  ? 'bg-gradient-to-tr from-amber-600 to-yellow-500 text-white'
+                  : 'bg-white text-black'
+              }`}
+            >
               {userProfile.name.charAt(0)}
             </div>
             <div className="truncate">
-              <span className="font-semibold text-white text-xs block truncate">
+              <span className={`font-semibold text-xs block truncate ${isLight ? 'text-zinc-900' : 'text-white'}`}>
                 {userProfile.name}
               </span>
-              <span className="text-[10px] text-slate-400 truncate block">
+              <span className={`text-[10px] truncate block ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
                 {userProfile.email}
               </span>
             </div>
           </div>
 
-          <Settings className="h-4 w-4 text-slate-500 hover:text-white transition-colors shrink-0" />
+          <Settings className={`h-4 w-4 transition-colors shrink-0 ${isLight ? 'text-amber-700 hover:text-amber-900' : 'text-zinc-400 hover:text-white'}`} />
         </div>
       </div>
     </div>
@@ -308,12 +434,14 @@ export function Sidebar() {
 
 function SessionRow({
   session,
+  isLight,
   isActive,
   onSelect,
   onDelete,
   onPin,
 }: {
   session: any;
+  isLight: boolean;
   isActive: boolean;
   onSelect: () => void;
   onDelete: () => void;
@@ -324,14 +452,20 @@ function SessionRow({
       onClick={onSelect}
       className={`group relative flex items-center justify-between rounded-xl px-3 py-2 text-xs cursor-pointer border transition-all ${
         isActive
-          ? 'bg-blue-600/15 border-blue-500/40 text-white font-medium shadow-sm'
-          : 'border-transparent text-slate-300 hover:bg-slate-900 hover:text-white'
+          ? isLight
+            ? 'bg-amber-100/70 border-amber-400 text-amber-950 font-semibold shadow-sm'
+            : 'bg-white/10 border-white/25 text-white font-medium shadow-sm'
+          : isLight
+          ? 'border-transparent text-zinc-700 hover:bg-amber-50/80 hover:text-zinc-950'
+          : 'border-transparent text-zinc-400 hover:bg-[#101010] hover:text-white'
       }`}
     >
       <div className="flex items-center gap-2 truncate pr-2">
         <MessageSquare
           className={`h-3.5 w-3.5 shrink-0 ${
-            isActive ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300'
+            isActive
+              ? isLight ? 'text-amber-700' : 'text-white'
+              : isLight ? 'text-amber-600/60 group-hover:text-amber-800' : 'text-zinc-600 group-hover:text-zinc-300'
           }`}
         />
         <span className="truncate">{session.title}</span>
@@ -343,8 +477,8 @@ function SessionRow({
             e.stopPropagation();
             onPin();
           }}
-          className={`p-1 hover:text-white ${
-            session.pinned ? 'text-amber-400' : 'text-slate-500'
+          className={`p-1 hover:text-amber-500 ${
+            session.pinned ? 'text-amber-500' : isLight ? 'text-zinc-400' : 'text-zinc-600'
           }`}
           title={session.pinned ? 'Unpin' : 'Pin'}
         >
@@ -355,7 +489,7 @@ function SessionRow({
             e.stopPropagation();
             onDelete();
           }}
-          className="p-1 text-slate-500 hover:text-rose-400"
+          className="p-1 text-zinc-500 hover:text-rose-500"
           title="Delete Chat"
         >
           <Trash2 className="h-3 w-3" />
@@ -364,3 +498,4 @@ function SessionRow({
     </div>
   );
 }
+

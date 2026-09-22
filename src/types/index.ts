@@ -163,3 +163,6 @@ export interface TelemetryMetric {
   latencyMs: number;
   costUsd: number;
 }
+
+export type ThemeMode = 'dark' | 'light';
+

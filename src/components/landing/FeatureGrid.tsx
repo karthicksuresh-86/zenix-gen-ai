@@ -1,6 +1,5 @@
-'use client';
-
 import React from 'react';
+import { useApp } from '@/lib/store';
 import {
   BrainCircuit,
   Code2,
@@ -17,6 +16,8 @@ import {
 } from 'lucide-react';
 
 export function FeatureGrid() {
+  const { theme } = useApp();
+
   const features = [
     {
       icon: Layout,
@@ -24,8 +25,8 @@ export function FeatureGrid() {
       badge: 'Interactive Sandbox',
       description:
         'Live side-by-side execution for HTML, React components, SVGs, and data visualizers with complete iframe isolation and single-click copy.',
-      color: 'from-blue-500 to-indigo-600',
-      border: 'hover:border-blue-500/40',
+      color: theme === 'light' ? 'from-amber-500 to-amber-600' : 'from-zinc-700 to-zinc-900',
+      border: theme === 'light' ? 'hover:border-amber-400/80' : 'hover:border-zinc-700',
     },
     {
       icon: Code2,
@@ -33,8 +34,8 @@ export function FeatureGrid() {
       badge: '338 Languages',
       description:
         'Full-stack code generation, debugging, AST transformations, SQL query optimization, and automated unit test mocks with edge-case detection.',
-      color: 'from-emerald-500 to-teal-600',
-      border: 'hover:border-emerald-500/40',
+      color: theme === 'light' ? 'from-amber-600 to-yellow-600' : 'from-zinc-800 to-zinc-950',
+      border: theme === 'light' ? 'hover:border-amber-400/80' : 'hover:border-zinc-700',
     },
     {
       icon: Globe,
@@ -42,8 +43,8 @@ export function FeatureGrid() {
       badge: 'Verified Truth',
       description:
         'Real-time multi-source web synthesis with interactive citation pills, domain favicons, publish dates, and instant hover source previews.',
-      color: 'from-purple-500 to-pink-600',
-      border: 'hover:border-purple-500/40',
+      color: theme === 'light' ? 'from-amber-500 to-amber-700' : 'from-zinc-700 to-zinc-900',
+      border: theme === 'light' ? 'hover:border-amber-400/80' : 'hover:border-zinc-700',
     },
     {
       icon: Database,
@@ -51,8 +52,8 @@ export function FeatureGrid() {
       badge: 'bge-large-en',
       description:
         'Ingest PDFs, technical manuals, and whitepapers into dense 1024-dimensional semantic stores for sub-10ms similarity searches.',
-      color: 'from-cyan-500 to-blue-600',
-      border: 'hover:border-cyan-500/40',
+      color: theme === 'light' ? 'from-yellow-600 to-amber-600' : 'from-zinc-800 to-zinc-950',
+      border: theme === 'light' ? 'hover:border-amber-400/80' : 'hover:border-zinc-700',
     },
     {
       icon: Eye,
@@ -60,8 +61,8 @@ export function FeatureGrid() {
       badge: 'OCR & Vision',
       description:
         'Upload screenshots, architectural charts, and scanned documents for instant OCR extraction, diagram breakdown, and layout analysis.',
-      color: 'from-amber-500 to-orange-600',
-      border: 'hover:border-amber-500/40',
+      color: theme === 'light' ? 'from-amber-500 to-orange-500' : 'from-zinc-700 to-zinc-900',
+      border: theme === 'light' ? 'hover:border-amber-400/80' : 'hover:border-zinc-700',
     },
     {
       icon: Mic,
@@ -69,22 +70,30 @@ export function FeatureGrid() {
       badge: 'Full Duplex',
       description:
         'Natural speech-to-text recognition and text-to-speech voice playback with animated glowing 3D-like audio waveform visualizers.',
-      color: 'from-rose-500 to-pink-600',
-      border: 'hover:border-rose-500/40',
+      color: theme === 'light' ? 'from-amber-600 to-amber-800' : 'from-zinc-800 to-zinc-950',
+      border: theme === 'light' ? 'hover:border-amber-400/80' : 'hover:border-zinc-700',
     },
   ];
 
   return (
     <section id="features" className="py-24 px-4 max-w-6xl mx-auto">
       <div className="text-center mb-16">
-        <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-950/30 px-4 py-1 text-xs font-semibold text-blue-300 mb-3">
-          <Sparkles className="h-3.5 w-3.5" />
+        <div className={`inline-flex items-center gap-2 rounded-full border px-4 py-1 text-xs font-semibold mb-3 ${
+          theme === 'light'
+            ? 'border-amber-300/80 bg-amber-100 text-amber-900 shadow-sm'
+            : 'border-zinc-800 bg-zinc-950 text-zinc-300 shadow-black'
+        }`}>
+          <Sparkles className={`h-3.5 w-3.5 ${theme === 'light' ? 'text-amber-600' : 'text-zinc-400'}`} />
           <span>Complete Feature Matrix</span>
         </div>
-        <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+        <h2 className={`text-3xl sm:text-5xl font-black tracking-tight ${
+          theme === 'light' ? 'text-stone-900' : 'text-white'
+        }`}>
           Everything You Need in One Assistant
         </h2>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto mt-3">
+        <p className={`text-xs sm:text-sm max-w-2xl mx-auto mt-3 ${
+          theme === 'light' ? 'text-stone-600' : 'text-zinc-400'
+        }`}>
           Engineered for developers, researchers, marketers, designers, and high-velocity teams.
         </p>
       </div>
@@ -95,29 +104,49 @@ export function FeatureGrid() {
           return (
             <div
               key={idx}
-              className={`group relative flex flex-col justify-between rounded-3xl border border-slate-800/80 bg-slate-900/60 p-7 glass-card transition-all duration-300 hover:scale-[1.02] ${f.border}`}
+              className={`group relative flex flex-col justify-between rounded-3xl border p-7 transition-all duration-300 hover:scale-[1.02] ${f.border} ${
+                theme === 'light'
+                  ? 'bg-white border-amber-200/80 shadow-md shadow-amber-500/5 hover:shadow-lg hover:shadow-amber-500/10'
+                  : 'bg-zinc-950 border-zinc-900 shadow-black hover:border-zinc-700'
+              }`}
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <div
-                    className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr ${f.color} text-white shadow-lg`}
+                    className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr ${f.color} text-white shadow-md border ${
+                      theme === 'light' ? 'border-amber-300/40' : 'border-zinc-700'
+                    }`}
                   >
                     <Icon className="h-6 w-6" />
                   </div>
-                  <span className="rounded-full bg-slate-800/90 border border-slate-700/80 px-3 py-1 text-[10px] font-mono font-semibold text-slate-300">
+                  <span className={`rounded-full border px-3 py-1 text-[10px] font-mono font-semibold ${
+                    theme === 'light'
+                      ? 'bg-amber-50 border-amber-200 text-amber-900'
+                      : 'bg-zinc-900 border-zinc-800 text-zinc-300'
+                  }`}>
                     {f.badge}
                   </span>
                 </div>
 
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-blue-300 transition-colors">
+                <h3 className={`text-lg font-bold mb-2 transition-colors ${
+                  theme === 'light'
+                    ? 'text-stone-900 group-hover:text-amber-800'
+                    : 'text-white group-hover:text-zinc-200'
+                }`}>
                   {f.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                <p className={`text-xs sm:text-sm leading-relaxed ${
+                  theme === 'light' ? 'text-stone-600' : 'text-zinc-400'
+                }`}>
                   {f.description}
                 </p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center gap-1 text-[11px] font-semibold text-blue-400 group-hover:text-blue-300">
+              <div className={`mt-6 pt-4 border-t flex items-center gap-1 text-[11px] font-semibold ${
+                theme === 'light'
+                  ? 'border-amber-100 text-amber-800 group-hover:text-amber-900'
+                  : 'border-zinc-900 text-zinc-400 group-hover:text-zinc-300'
+              }`}>
                 <span>Enterprise Ready</span>
                 <span>• Sub-120ms Latency</span>
               </div>
