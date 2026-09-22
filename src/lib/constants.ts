@@ -197,10 +197,35 @@ export const DEFAULT_PROMPT_LIBRARY: PromptTemplate[] = [
     prompt: 'Summarize the core breakthrough of the provided research paper. Structure the breakdown into: 1. Core Problem, 2. Novel Architecture/Method, 3. Empirical Results & Baselines, 4. Critical Limitations, 5. Practical Engineering Takeaways.',
     tags: ['Research', 'Summarizer', 'Papers', 'Science'],
     iconName: 'FileText',
+  },
+  {
+    id: 'p-9',
+    title: 'Friendly Tanglish Coding Mentor (தமிழ் & English)',
+    category: 'Coding',
+    description: 'Explain coding concepts, debug errors, and write full code in friendly, natural Tanglish.',
+    prompt: 'Enakku indha coding topic pathi super simple-aa, real-life examples vachu Tanglish-la explain pannu bro. Step-by-step code and clear tips thanga!',
+    tags: ['Tanglish', 'Tamil', 'Coding', 'Mentor'],
+    iconName: 'Terminal',
+  },
+  {
+    id: 'p-10',
+    title: 'Friendly Tech Peer Chat (Tanglish Buddy)',
+    category: 'Education',
+    description: 'Chat naturally like human friends about tech, careers, project ideas, or everyday topics.',
+    prompt: 'Hey! Namma jolly-aa friendly-aa chat pannuvom. Enakku pudhu tech ideas & career tips venum. Simple Tanglish-la advice thanga!',
+    tags: ['Tanglish', 'Friendly Chat', 'Career', 'Peer'],
+    iconName: 'Smile',
   }
 ];
 
 export const INITIAL_USER_MEMORIES: UserMemory[] = [
+  {
+    id: 'm-0',
+    content: 'Enjoys natural, warm, and friendly conversations in Tanglish and English like chatting with a supportive human friend and tech peer.',
+    category: 'personal',
+    createdAt: Date.now() - 86400000 * 4,
+    isActive: true,
+  },
   {
     id: 'm-1',
     content: 'Prefers TypeScript with strict types and modern React functional components with Tailwind CSS.',
@@ -210,7 +235,7 @@ export const INITIAL_USER_MEMORIES: UserMemory[] = [
   },
   {
     id: 'm-2',
-    content: 'Works as a Principal Engineer designing scalable AI applications and full-stack architectures.',
+    content: 'Works as an innovative software developer designing modern AI applications and full-stack web platforms.',
     category: 'work',
     createdAt: Date.now() - 86400000 * 2,
     isActive: true,

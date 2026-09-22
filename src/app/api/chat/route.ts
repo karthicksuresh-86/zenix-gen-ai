@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Citation, Artifact } from '@/types';
-import { findMatchingKnowledge } from '@/lib/knowledge-bank';
+import { findMatchingKnowledge, isTanglishOrTamilQuery, handleConversationalChat } from '@/lib/knowledge-bank';
 import { performDeepWebSearch, DeepSearchData } from '@/lib/web-search';
 
 // Convert Wikipedia raw extract headers into clean Markdown
@@ -17,24 +17,52 @@ function formatWikiExtract(rawText: string): string {
 
 // Build an exhaustive, multi-source comprehensive intelligence report
 function buildDeepDiveReport(prompt: string, searchData: DeepSearchData): string {
-  // 1. Check curated knowledge bank first for instantaneous high-precision answers
+  // 1. Check curated conversational greetings & knowledge bank first
+  const conversational = handleConversationalChat(prompt);
+  if (conversational) {
+    return conversational;
+  }
+
   const curated = findMatchingKnowledge(prompt);
   if (curated) {
     return curated;
   }
 
+  const isTanglish = isTanglishOrTamilQuery(prompt);
   const topicName = searchData.articleTitle || prompt;
   const capitalizedTopic = topicName.charAt(0).toUpperCase() + topicName.slice(1);
 
   // 2. High-density synthesis if extract is available
   if (searchData.fullExtract && searchData.fullExtract.length > 200) {
     const formatted = formatWikiExtract(searchData.fullExtract.slice(0, 7500));
-    let report = `# 📘 Multi-Source Research Intelligence: ${capitalizedTopic}\n\n`;
+    
+    if (isTanglish) {
+      let report = `# 💡 ${capitalizedTopic} — Friendly Explanation (Tanglish)\n\n`;
+      report += `Hey! Super question! **${capitalizedTopic}** pathi ungalukku easy-aa puriyura mari detailed-aa explain panren:\n\n`;
+      report += `## 1. 📌 Simple-aa sollanum-na (Quick Summary)\n`;
+      report += `${searchData.summary || formatted.slice(0, 500)}\n\n`;
+      report += `---\n\n`;
+      report += `## 2. 🏛️ Detailed Breakdown & Architecture\n\n`;
+      report += `${formatted}\n\n`;
 
+      if (searchData.topGitHubRepos && searchData.topGitHubRepos.length > 0) {
+        report += `---\n\n## 3. 🐙 Top Open-Source Projects (GitHub)\n\n`;
+        searchData.topGitHubRepos.forEach((repo) => {
+          report += `* **[${repo.name}](${repo.url})** (\`⭐ ${(repo.stars / 1000).toFixed(1)}k stars\`)\n  ${repo.desc}\n\n`;
+        });
+      }
+
+      report += `---\n\n## 4. 💡 Important Takeaways & Tips\n`;
+      report += `* **Easy Implementation:** Namma production code-la idhai clean-aa use pannalaam.\n`;
+      report += `* **Scalability:** Big applications-ku scalable foundation tharum.\n\n`;
+      report += `Idhula ungalukku specific-aa edhavadhu code example or doubt irukka? Thayangaama kelunga, namma solve pannuvom! 😊`;
+      return report;
+    }
+
+    let report = `# 📘 Multi-Source Research Intelligence: ${capitalizedTopic}\n\n`;
     report += `## 1. 📌 Executive Summary\n`;
     report += `${searchData.summary || formatted.slice(0, 500)}\n\n`;
     report += `---\n\n`;
-
     report += `## 2. 🏛️ Core Technical Architecture & Detailed Breakdown\n\n`;
     report += `${formatted}\n\n`;
 
@@ -64,6 +92,23 @@ function buildDeepDiveReport(prompt: string, searchData: DeepSearchData): string
   }
 
   // 3. Dynamic Structured Synthesis using all gathered web signals
+  if (isTanglish) {
+    let report = `# 💡 ${capitalizedTopic} — Explanation & Overview\n\n`;
+    report += `Hey friend! **${capitalizedTopic}** pathi namma easy-aa paapom:\n\n`;
+    if (searchData.summary) {
+      report += `> ${searchData.summary}\n\n`;
+    }
+    report += `### 🌟 Main Points:\n`;
+    report += `* **High Reliability:** Fast execution & clean architecture tharum.\n`;
+    report += `* **Developer Friendly:** Workflows easy-aa maintain panna mudiyum.\n\n`;
+    report += `---\n\n## 🛠️ Step-by-Step Understanding:\n`;
+    report += `1. **Interface Layer:** Inputs & API calls handle pannum.\n`;
+    report += `2. **Processing Core:** Main business logic & calculations execute aagum.\n`;
+    report += `3. **Output & Result:** Clean format-la display aagum.\n\n`;
+    report += `Ungalukku idhula code example or step-by-step tutorial venuma? Sollunga! 🚀`;
+    return report;
+  }
+
   let report = `# 📌 Multi-Source Intelligence: ${capitalizedTopic}\n\n`;
   report += `## 1. 📖 Overview & Core Definition\n`;
   report += `**${capitalizedTopic}** is a critical technology and design paradigm in modern software engineering and computational architectures.\n\n`;
@@ -208,17 +253,20 @@ export async function POST(req: NextRequest) {
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({
           model: 'gemini-1.5-flash',
-          systemInstruction: `You are an elite AI intelligence researcher.
+          systemInstruction: `You are Zenix, a friendly, warm, empathetic, and exceptionally capable AI coding companion and intelligence assistant.
+
+CORE PERSONALITY & TONE:
+1. Speak naturally, warmly, and empathetically, like a real, supportive human peer and senior developer friend. Avoid robotic or stiff corporate phrasing.
+2. Tanglish & Tamil Fluency: When the user chats in Tanglish (Tamil written using English script, e.g., "epdi iruka", "sollu bro", "react vs nextjs enna difference", "intha code explain pannu") or Tamil, respond enthusiastically and fluently in natural, relatable, friendly Tanglish/Tamil! Use everyday conversational words (e.g., "Kandippa!", "Idho ungalukku...", "Super question bro!", "Simple-aa sollanum-na...").
+3. Adaptability: Seamlessly match the language the user is speaking (Tanglish -> Tanglish, Tamil -> Tamil, English -> English).
+4. Clarity & Quality: Structure answers with clean Markdown headings, bullet points, real-world analogies, code snippets, and helpful step-by-step breakdowns.
+5. If code or UI is requested, write complete, runnable, production-quality code.
+6. Always be encouraging, friendly, and user-friendly!
+
 Live Web Grounding Data:
 ${searchData.summary ? `Summary: ${searchData.summary}` : ''}
 ${searchData.fullExtract ? `Detailed Extract: ${searchData.fullExtract.slice(0, 3000)}` : ''}
-${searchData.topGitHubRepos ? `GitHub Top Projects: ${JSON.stringify(searchData.topGitHubRepos)}` : ''}
-
-Instructions:
-1. Provide a direct, highly accurate, and comprehensive answer synthesized with the latest research and source citations.
-2. Structure with clear Markdown headers, bold highlights, comparison tables, code blocks, and real-world analogies.
-3. If the user asks in Tamil or Tanglish, answer fluently in Tamil/Tanglish.
-4. If code or UI is requested, provide complete runnable code.`,
+${searchData.topGitHubRepos ? `GitHub Top Projects: ${JSON.stringify(searchData.topGitHubRepos)}` : ''}`,
         });
 
         const history = messages.slice(-10).map((m: any) => ({

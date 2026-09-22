@@ -1,7 +1,177 @@
+// Conversational & Tanglish Knowledge Engine
+
 export interface TopicKnowledge {
   keywords: string[];
   title: string;
   generateResponse: (prompt: string, isTanglishOrTamil: boolean) => string;
+}
+
+// Check if input is Tanglish or Tamil
+export function isTanglishOrTamilQuery(prompt: string): boolean {
+  const p = prompt.toLowerCase().trim();
+  if (/[^\x00-\x7F]/.test(prompt)) return true; // Tamil unicode script
+
+  const tanglishPatterns = [
+    /\b(epdi|enna|sollu|solunga|panra|iruka|irukeenga|keta|pesu|pesura|kuda|yen|edhu|engae|inga|anga|varuthu|vanthuchu|purila|theriyala)\b/i,
+    /\b(nalla|sandhosham|nandri|vanakkam|bro|machan|thala|nanba|friend|da|pa|ya|la|ma|dhan|thambi|anna)\b/i,
+    /\b(saptingala|thungitiya|velai|padikira|kathuko|solli|kodu|doubt|doubtu|purinjitha|solren|pannu|podu|ezhuthu)\b/i,
+    /\b(kooda|enakku|ungalku|ungaloda|ennoda|namma|romba|semma|mass|vera|level|super|katru|pesalam)\b/i,
+    /\b(tanglish|tamil|thamizh)\b/i,
+  ];
+
+  return tanglishPatterns.some(pattern => pattern.test(p));
+}
+
+// Friendly Tanglish conversational greetings and small talk handler
+export function handleConversationalChat(prompt: string): string | null {
+  const p = prompt.toLowerCase().trim();
+  const isTanglish = isTanglishOrTamilQuery(prompt);
+
+  // 1. Greetings & "How are you"
+  if (
+    /^(hi|hello|hey|hola|vanakkam|namaste|hlo|helo)[\s!.]*$/i.test(p) ||
+    p.includes('epdi iruka') ||
+    p.includes('epdi irukinga') ||
+    p.includes('how are you') ||
+    p.includes('nalla irukiya') ||
+    p.includes('sollu bro') ||
+    p.includes('enna panra') ||
+    p.includes('enna panringa')
+  ) {
+    if (isTanglish || p.includes('epdi') || p.includes('enna') || p.includes('vanakkam')) {
+      return `### Hey! Vanakkam! 👋
+
+Naan romba nallaa, super-aa iruken! Neenga epdi irukeenga? 
+
+Naan ungaloda **Zenix AI friend**. Enkooda neenga normal people kooda pesura maariye jolly-aa, friendly-aa pesalam:
+
+* 💻 **Coding & Tech Doubts** (React, Next.js, Python, Git, JavaScript, APIs...)
+* 🚀 **Projects & App Development** ideas and complete code
+* 📚 **Studies & Exam preparation**
+* 💬 **General casual chat & brainstorming**
+
+Enna topic pathi pesa poreenga? Ungalukku enna help venum sollunga, namma jolly-aa discuss pannuvom! 😊`;
+    }
+
+    return `### Hello! 👋 Welcome to Zenix AI!
+
+I am doing great and excited to chat with you! How are you doing today?
+
+I'm your friendly AI assistant and coding mentor. We can talk naturally about:
+* 💻 **Coding, Architecture & Debugging**
+* 🚀 **Full-Stack Project Development**
+* 💡 **Brainstorming & Technical Deep Dives**
+* 💬 **Any everyday questions & learning**
+
+What would you like to explore or build today? Let me know! 😊`;
+  }
+
+  // 2. Who are you / Identity
+  if (
+    p.includes('who are you') ||
+    p.includes('un name enna') ||
+    p.includes('unoda name') ||
+    p.includes('ne yar') ||
+    p.includes('ne yaaru') ||
+    p.includes('about yourself') ||
+    p.includes('zenix pathi')
+  ) {
+    if (isTanglish) {
+      return `### Naan thaan ungaloda Zenix AI! 🚀
+
+Naan oru **Smart, Friendly, Full-Stack AI Assistant & Coding Mentor**.
+
+**Enkooda neenga enna ellam pannalam:**
+1. **Friendly-aa Tanglish or English-la chat pannalam:** Neenga epdi pesuringalo athe mari friendly-aa, user-friendly-aa explain pannuven.
+2. **Code & Project help:** React, Next.js, Python, Tailwind, Backend APIs, Git nu edhuva irundhalum complete code & guidance tharuven.
+3. **Complex concepts-ah simple-aa puriya veppen:** Real-world examples & analogies vachu easy-aa explain pannuven.
+
+Ungalukku ippo enna kethukanum sollunga? Let's start! 🔥`;
+    }
+
+    return `### I am Zenix AI! 🚀
+
+Your high-performance, intelligent, and friendly AI coding assistant & mentor.
+
+**What I can do for you:**
+* **Friendly natural conversations** in English, Tanglish, and Tamil.
+* **Full-stack code generation** (React, Next.js, TypeScript, Tailwind, Python, APIs).
+* **Live Interactive UI Artifacts** & real-time problem solving.
+* **Deep research and clear step-by-step explanations**.
+
+How can I help you today?`;
+  }
+
+  // 3. Asking for help / doubts
+  if (
+    p.includes('help pannu') ||
+    p.includes('oru doubt') ||
+    p.includes('doubt iruku') ||
+    p.includes('doubt keka') ||
+    p.includes('help me') ||
+    p.includes('can you help') ||
+    p.includes('guide pannu') ||
+    p.includes('teach pannu')
+  ) {
+    if (isTanglish) {
+      return `### Kandippa bro/friend! Enna doubt sollunga! 🙌
+
+Edhava irundhalum thayangama kelunga:
+* Coding error or bug fix
+* Concept explanation (Git, React, Next.js, Python, Database...)
+* New project ideas or career advice
+
+Ungaloda question-ai type pannunga, namma easy-aa solve pannalam!`;
+    }
+
+    return `### Absolutely! I'm here to help you. 🙌
+
+Feel free to ask any question:
+* Debugging or writing code
+* Explaining complex concepts with clear examples
+* Designing software architectures or databases
+
+What's on your mind? Share your question and let's get it solved!`;
+  }
+
+  // 4. Gratitude & compliment
+  if (
+    p.includes('thank') ||
+    p.includes('nandri') ||
+    p.includes('super bro') ||
+    p.includes('mass') ||
+    p.includes('vera level') ||
+    p.includes('semma') ||
+    p.includes('awesome') ||
+    p.includes('great work')
+  ) {
+    if (isTanglish) {
+      return `### Romba sandhosham! Magizhchi! ❤️🔥
+
+Ungalukku help pannadhu romba happy! Innum edhavadhu doubts or help venumna eppo venalum kelunga, namma serndhu build pannuvom! 🚀`;
+    }
+
+    return `### You're very welcome! ❤️
+
+Glad I could help! If you have any more questions or want to dive deeper into anything, just let me know. Happy building! 🚀`;
+  }
+
+  // 5. Casual everyday questions (eating, daily life)
+  if (
+    p.includes('saptingala') ||
+    p.includes('sapacha') ||
+    p.includes('dinner') ||
+    p.includes('lunch') ||
+    p.includes('breakfast')
+  ) {
+    if (isTanglish) {
+      return `Haha, naan AI aache! Enakku ungaloda chat data & internet knowledge thaan sapadu! ⚡😄
+
+Neenga sapteengala? Enna spl inaikku? Nalla saaptu refreshment eduthutu vanga, namma jolly-aa learn & code pannalam! 🚀`;
+    }
+  }
+
+  return null;
 }
 
 export const TOPIC_KNOWLEDGE_BASE: TopicKnowledge[] = [
@@ -9,68 +179,70 @@ export const TOPIC_KNOWLEDGE_BASE: TopicKnowledge[] = [
   {
     keywords: ['git', 'github', 'version control', 'vcs', 'git vs github', 'commit', 'branch', 'pull request', 'merge conflict'],
     title: 'Git and GitHub: Comprehensive Version Control Guide',
-    generateResponse: (prompt, isTamil) => {
-      if (isTamil) {
-        return `# 📌 Git & GitHub — முழுமையான விளக்கம் (Tamil & English Guide)
+    generateResponse: (prompt, isTanglish) => {
+      if (isTanglish) {
+        return `# 📌 Git & GitHub — Super Simple & Friendly Guide (Tanglish)
 
-**Git** மற்றும் **GitHub** இரண்டுமே Software Development-ல் மிக முக்கியமான கருவிகள்.
-
----
-
-## 1. 🔍 Git என்றால் என்ன? (What is Git?)
-* **Git** என்பது உங்கள் கம்ப்யூட்டரில் இயங்கும் ஒரு **Version Control System (VCS)**.
-* இது உங்கள் கோப்புகளில் (Files / Code) செய்யப்படும் ஒவ்வொரு மாற்றத்தையும் (Changes) டிராக் (Track) செய்யும்.
-* **Offline-ல் வேலை செய்யும்:** இன்டர்நெட் இல்லாமலே நீங்கள் commit, branch, merge செய்யலாம்.
-* **உதாரணம்:** ஒரு Game-ல் நீங்கள் Safe Point சேமிப்பது போல, Git-ல் உங்கள் Code-ஐ ஒவ்வொரு கட்டத்திலும் commit செய்து சேமித்து வைக்கலாம். ஏதாவது தவறு நடந்தால் பழைய நிலைக்குத் திரும்பலாம்.
+Hey! Git & GitHub pathi ungalukku romba easy-aa, real-life examples vachu explain panren!
 
 ---
 
-## 2. 🌐 GitHub என்றால் என்ன? (What is GitHub?)
-* **GitHub** என்பது Git Repositories-ஐ ஆன்லைனில் சேமிக்கும் ஒரு **Cloud Platform** ஆகும்.
-* உங்கள் Code-ஐ இணையத்தில் பேக்கப் எடுக்கவும், உலகம் முழுவதும் உள்ள மற்ற டெவலப்பர்களுடன் இணைந்து பணியாற்றவும் (Collaboration) இது பயன்படுகிறது.
-* **முக்கிய அம்சங்கள்:** Pull Requests, Code Reviews, Issue Tracking, GitHub Actions (CI/CD), Open Source Hosting.
+## 1. 🔍 Git na enna? (What is Git?)
+* **Git** ungaloda computer-la run aagura oru **Version Control System (VCS)**.
+* Idhu ungaloda files & code-la neenga panra ovvoru maatrangalayum (changes) **Time Machine** mari record panni vachukkum.
+* **Real-life Example:** Namma oru Game vilayadumpothu **Save Point / Checkpoint** poduvom la? Adhey mari Git-la \`git commit\` panni save point vachukalaam. Edhavadhu code crash aana, instant-aa pazhaya save point-ku thirumba poidalaam!
+* **Offline-la work aagum:** Internet thevaiye illa.
 
 ---
 
-## 3. 📊 Git vs GitHub — முக்கிய வேறுபாடுகள்
+## 2. 🌐 GitHub na enna? (What is GitHub?)
+* **GitHub** ungaloda Git repositories-ai online-la store panra oru **Cloud Platform**.
+* **Real-life Example:** Git ungaloda camera-la photo edukura mari na, **GitHub** andha photos-ah upload panra Google Drive / Instagram mari!
+* Idhula ungaloda code-ai backup panni, world-wide irukura matha developers kooda serndhu work (collaboration) pannalam.
 
-| அம்சம் (Feature) | Git | GitHub |
+---
+
+## 3. 📊 Git vs GitHub — Quick Comparison
+
+| Feature | Git | GitHub |
 | :--- | :--- | :--- |
-| **வகை** | Local Software Tool | Cloud-based Web Service |
-| **இயங்கும் இடம்** | உங்கள் லேப்டாப் / கம்ப்யூட்டர் | ஆன்லைன் சர்வர்கள் (Cloud) |
-| **இன்டர்நெட்** | தேவையில்லை (Offline) | தேவை (Online Sync) |
-| **பயன்பாடு** | Code மாற்றங்களை டிராக் செய்ய | Code-ஐ பகிர மற்றும் குழுவாக பணியாற்ற |
-| **உரிமையாளர்** | Open Source (Linus Torvalds) | Microsoft |
+| **Enna idhu?** | Local Software Tool | Online Cloud Platform |
+| **Enga run aagum?** | Ungal Laptop / PC-la | Online Servers (Cloud) |
+| **Internet thevaiya?** | ❌ Illai (100% Offline) | ✅ Aamaam (Sync panna thevai) |
+| **Main work** | Code changes track panna | Code share panna & team work |
+| **Owner** | Open Source (Linus Torvalds) | Microsoft |
 
 ---
 
-## 4. 🛠️ அத்தியாவசிய Git கட்டளைகள் (Essential Commands)
+## 4. 🛠️ Daily Use Panra Important Git Commands
 
 \`\`\`bash
-# 1. புதிய Git Repository தொடங்க
+# 1. Pudhu Git Repo start panna
 git init
 
-# 2. கோப்புகளை Staging Area-விற்கு சேர்க்க
+# 2. Files-ah stage panna (ready for save)
 git add .
 
-# 3. மாற்றங்களை Commit செய்ய (Save Point)
-git commit -m "feat: initial project setup"
+# 3. Changes-ah Save Point (Commit) panna
+git commit -m "feat: login page created"
 
-# 4. GitHub Remote Repo-வை இணைக்க
-git remote add origin https://github.com/username/repo-name.git
+# 4. GitHub remote link add panna
+git remote add origin https://github.com/username/repo.git
 
-# 5. GitHub-க்கு Code அனுப்ப (Push)
+# 5. GitHub-ku code-ah send panna (Push)
 git push -u origin main
 
-# 6. GitHub-லிருந்து Code டவுன்லோட் செய்ய
-git clone https://github.com/username/repo-name.git
+# 6. GitHub-la irundhu code download panna
+git clone https://github.com/username/repo.git
 \`\`\`
 
 ---
 
-## 5. 💡 சுருக்கம் (Summary)
-* **Git** = உங்கள் கம்ப்யூட்டரில் கோப்புகளின் வரலாற்றை நிர்வகிக்கும் கருவி.
-* **GitHub** = அந்த கோப்புகளை இணையத்தில் வைத்து குழுவாக இணைந்து வேலை செய்யும் தளம்.`;
+## 5. 💡 Summary Tips:
+* **Git** = Ungal laptop-la code history maintain panra tool.
+* **GitHub** = Andha code-ai cloud-la safe-aa store panni share panra website.
+
+Idhula ungalukku edhavadhu specific command or error pathi doubt irukka? Thayangaama kelunga! 😊`;
       }
 
       return `# 📌 Comprehensive Guide: Git & GitHub
@@ -83,106 +255,84 @@ git clone https://github.com/username/repo-name.git
 * **GitHub** is a **Cloud-based platform** that hosts Git repositories. It provides collaboration tools, code review mechanisms, CI/CD automation, and project management.
 
 > **💡 Real-World Analogy:**  
-> If **Git** is your digital camera that captures timestamps and snapshots of your work locally, **GitHub** is **Instagram / Google Drive** where you upload, share, and collaborate on those photos with your team.
+> If **Git** is your digital camera that captures snapshots of your work locally, **GitHub** is **Google Drive / Cloud** where you upload, share, and collaborate on those photos with your team.
 
 ---
 
 ## 2. 🔍 Understanding Git (The Engine)
 
-Created by **Linus Torvalds** in 2005 (the creator of Linux), Git solves the problem of tracking file revisions, preventing accidental code overwrites, and managing concurrent development.
+Created by **Linus Torvalds** in 2005, Git solves the problem of tracking file revisions, preventing accidental code overwrites, and managing concurrent development.
 
 ### The 3 Local Zones of Git:
 1. **Working Directory:** The local folder where you are actively modifying files.
 2. **Staging Area (Index):** A preview zone where you pick and stage files to be included in the next commit (\`git add\`).
 3. **Local Repository (.git):** The database where Git permanently stores file snapshots and history (\`git commit\`).
-
-\`\`\`
-Working Directory  ──( git add . )──>  Staging Area  ──( git commit )──>  Local Repository (.git)
-\`\`\`
-
+{{ ... }}
 ---
 
 ## 3. 🌐 Understanding GitHub (The Platform)
 
 GitHub supercharges Git by providing a central cloud repository and rich collaboration tools:
-
-1. **Pull Requests (PR):** Propose code changes, request peer reviews, and discuss line-by-line modifications before merging into production.
-2. **Issues & Project Boards:** Kanban boards and issue trackers for organizing sprints, bugs, and roadmap features.
-3. **GitHub Actions:** Built-in CI/CD (Continuous Integration / Continuous Deployment) to run tests and deploy code automatically on push.
-4. **Forks & Open Source:** Fork any public repository, make improvements, and submit a pull request back to the author.
+1. **Pull Requests (PR):** Propose code changes, request peer reviews, and discuss line-by-line modifications before merging.
+2. **GitHub Actions:** Built-in CI/CD (Continuous Integration / Continuous Deployment) to run tests and deploy code automatically on push.
+3. **Forks & Collaboration:** Fork any public repository, make improvements, and submit pull requests.
 
 ---
 
-## 4. 📊 Git vs. GitHub Comparison
+## 4. 🛠️ Essential Git & GitHub Workflow
 
-| Feature | Git | GitHub |
-| :--- | :--- | :--- |
-| **Type** | Version Control Tool / CLI Software | Cloud Hosting & Collaboration Platform |
-| **Installation** | Installed locally on your machine | Accessed via Web Browser / Desktop App / CLI |
-| **Internet Required** | ❌ No (Works 100% offline) | ✅ Yes (Required for syncing and cloud features) |
-| **Core Functionality** | Commit history, branching, merging | Pull Requests, Issues, Actions, Team Management |
-| **Created By** | Linus Torvalds (2005) | Chris Wanstrath, PJ Hyett, Tom Preston-Werner (Acquired by Microsoft) |
-| **Alternative Competitors** | Mercurial, SVN, Perforce | GitLab, Bitbucket, Azure DevOps |
-
----
-
-## 5. 🛠️ Essential Git & GitHub Workflow & Commands
-
-### Step 1: Initializing and Committing Locally
 \`\`\`bash
-# Initialize a new Git repository
+# 1. Initialize local repository
 git init
 
-# Check the status of your files
-git status
-
-# Stage all modified and new files
+# 2. Stage and commit files
 git add .
+git commit -m "feat: initial project setup"
 
-# Create a permanent commit with a descriptive message
-git commit -m "feat: implement user registration and authentication"
-\`\`\`
-
-### Step 2: Branching and Switching
-\`\`\`bash
-# Create and switch to a new feature branch
-git checkout -b feature/dark-mode
-
-# Merge branch into main
-git checkout main
-git merge feature/dark-mode
-\`\`\`
-
-### Step 3: Connecting to GitHub & Synchronizing
-\`\`\`bash
-# Link local repository to a remote GitHub repo
-git remote add origin https://github.com/your-username/your-repo.git
-
-# Push changes to GitHub
+# 3. Connect to GitHub and push
+git remote add origin https://github.com/username/repo-name.git
 git push -u origin main
-
-# Clone an existing remote repository
-git clone https://github.com/your-username/your-repo.git
-
-# Pull the latest changes from GitHub
-git pull origin main
-\`\`\`
-
----
-
-## 6. 💡 Best Practices
-1. **Commit Often, Commit Small:** Make focused, atomic commits for single logical changes.
-2. **Write Meaningful Commit Messages:** Follow conventional commits (e.g., \`feat:\`, \`fix:\`, \`docs:\`, \`refactor:\`).
-3. **Use \`.gitignore\`:** Always ignore sensitive files (e.g., \`.env\`, \`node_modules/\`, \`.DS_Store\`).
-4. **Never Commit Secrets / API Keys:** Use environment variables instead.`;
+\`\`\``;
     }
   },
 
   // 2. React vs Next.js
   {
     keywords: ['react', 'nextjs', 'next.js', 'react vs nextjs', 'server components', 'ssr', 'csr', 'app router'],
-    title: 'React vs Next.js: Complete Architectural Analysis',
-    generateResponse: (prompt, isTamil) => {
+    title: 'React vs Next.js: Architecture, Differences & Guide',
+    generateResponse: (prompt, isTanglish) => {
+      if (isTanglish) {
+        return `# ⚛️ React vs Next.js — Super Clear Tanglish Guide
+
+Namma web development-la romba popular aana rendu tech stack **React** and **Next.js**. Rendum enna difference nu paapom!
+
+---
+
+## 1. 📌 Simple Analogy
+* **React** nu solrathu oru **Car Engine** mari (Core UI Library).
+* **Next.js** nu solrathu andha engine kooda AC, GPS, Safety features, automatic gear ellaam sernthu varra **Complete Luxury Car** mari (Full-Stack Framework)!
+
+---
+
+## 2. 📊 Main Differences
+
+| Feature | React | Next.js |
+| :--- | :--- | :--- |
+| **Type** | UI Library | Full-Stack React Framework |
+| **Rendering** | Client-Side (Browser-la load aagum) | Server-Side Rendering (SSR) & Static (SSG) |
+| **Speed & SEO** | SEO konjam slow (Google bot empty page paarkum) | ⚡ Super Fast & Best SEO (Pre-rendered HTML) |
+| **Routing** | Extra package thevai (\`react-router-dom\`) | Built-in File-based Routing (\`app/\` folder) |
+| **Backend API** | Separate backend thevai (Node.js/Express) | Built-in API Routes (\`app/api/...\`) |
+
+---
+
+## 3. 💡 Endha Project-ku edhai choose pannanum?
+* **React:** Internal dashboards, simple single-page apps (SPA), tools with private login.
+* **Next.js:** E-commerce websites, blogs, SaaS landing pages, production apps requiring top SEO & performance.
+
+Ungaloda next project-ku code example venuma? Sollunga, write panni tharen! 😊`;
+      }
+
       return `# ⚛️ React vs Next.js: Architecture, Differences & Guide
 
 ---
@@ -191,7 +341,7 @@ git pull origin main
 * **React:** A JavaScript **library** developed by Meta for building component-based User Interfaces. It runs primarily on the client (Client-Side Rendering).
 * **Next.js:** A full-stack React **framework** developed by Vercel that brings Server-Side Rendering (SSR), Static Site Generation (SSG), React Server Components (RSC), App Router, and built-in API routes.
 
-> **Analogy:** If **React** is the high-performance car engine, **Next.js** is the complete luxury car with GPS navigation, climate control, safety features, and turbocharger pre-installed.
+> **Analogy:** If **React** is the high-performance car engine, **Next.js** is the complete luxury car with GPS navigation, climate control, and turbocharger pre-installed.
 
 ---
 
@@ -203,154 +353,89 @@ git pull origin main
 | **Rendering** | Client-Side (CSR) | SSR, SSG, ISR, RSC (App Router) |
 | **Routing** | Requires external library (\`react-router-dom\`) | Built-in file-system based routing (\`app/\` or \`pages/\`) |
 | **SEO** | Harder (Empty HTML initially sent to crawlers) | Excellent (HTML rendered on server beforehand) |
-| **Backend / APIs** | Requires separate backend (Express, Django) | Built-in API routes & Server Actions |
-| **Image & Font Optimization** | Manual configuration | Built-in (\`next/image\`, \`next/font\`) |
-| **Data Fetching** | \`useEffect\`, React Query, SWR | Async Server Components (\`await fetch()\`), Server Actions |
-
----
-
-## 3. 🛠️ Code Comparison
-
-### React (Client-Side Data Fetching):
-\`\`\`tsx
-// React: Requires useState and useEffect
-import { useState, useEffect } from 'react';
-
-export function UserList() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/users')
-      .then(res => res.json())
-      .then(data => {
-        setUsers(data);
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading) return <p>Loading...</p>;
-  return <ul>{users.map(u => <li key={u.id}>{u.name}</li>)}</ul>;
-}
-\`\`\`
-
-### Next.js (React Server Component):
-\`\`\`tsx
-// Next.js: Direct async component on the server (Zero bundle size overhead on client)
-export default async function UserListPage() {
-  const res = await fetch('https://api.example.com/users', { next: { revalidate: 3600 } });
-  const users = await res.json();
-
-  return (
-    <ul>
-      {users.map((u: any) => (
-        <li key={u.id}>{u.name}</li>
-      ))}
-    </ul>
-  );
-}
-\`\`\`
-
----
-
-## 4. 🎯 When to choose which?
-* **Choose React (Vite/SPA)** when: Building internal dashboards, authenticated portals, canvas/game apps where SEO does not matter.
-* **Choose Next.js** when: Building e-commerce, SaaS, landing pages, blogs, or products requiring fast LCP, top SEO rankings, and seamless fullstack capability.`;
+| **Backend / APIs** | Requires separate backend (Express, Django) | Built-in API routes & Server Actions |`;
     }
   },
 
-  // 3. Docker & Containers
+  // 3. Python vs JavaScript
   {
-    keywords: ['docker', 'container', 'dockerfile', 'docker-compose', 'kubernetes', 'containerization', 'image vs container'],
-    title: 'Docker & Containerization Masterclass',
-    generateResponse: (prompt, isTamil) => {
-      return `# 🐳 Docker & Containers Explained
+    keywords: ['python', 'javascript', 'js vs python', 'python vs javascript', 'learn python', 'learn javascript'],
+    title: 'Python vs JavaScript: Full Guide',
+    generateResponse: (prompt, isTanglish) => {
+      if (isTanglish) {
+        return `# 🐍 Python vs 🌐 JavaScript — Which One to Learn? (Tanglish)
+
+Rendumey world-la top most popular programming languages! Ungaloda goal-ku edhu best nu paapom:
 
 ---
 
-## 1. 📌 What is Docker?
-**Docker** is an open platform for developing, shipping, and running applications inside **containers**. Containers package your application code, runtime, system tools, libraries, and configurations together so the app runs consistently on any computer (development laptop, staging, or production cloud).
-
-> **Solving the Classic Problem:** *"It works on my machine, why is it breaking on the server?"* — Docker eliminates this issue completely.
-
----
-
-## 2. 🧱 Key Docker Concepts
-
-1. **Dockerfile:** A text file with instructions to build a Docker Image (recipe).
-2. **Docker Image:** A read-only template with instructions for creating a Docker container (blueprint/executable package).
-3. **Docker Container:** A runnable, isolated instance of an image.
-4. **Docker Hub / Registry:** A repository for storing and sharing Docker images.
-5. **Docker Compose:** A tool for defining and running multi-container Docker applications via YAML file.
+## 1. 🚀 Quick Decision Guide:
+* **JavaScript / TypeScript** padiunga if ungalukku **Web Development (Frontend, Full-Stack, React, Next.js, Mobile Apps)** panna aasai irundha!
+* **Python** padiunga if ungalukku **AI, Machine Learning, Data Science, Cyber Security, Automation** panna aasai irundha!
 
 ---
 
-## 3. 🛠️ Example Dockerfile for Node.js / Next.js
-\`\`\`dockerfile
-# 1. Base Image
-FROM node:20-alpine AS base
-WORKDIR /app
-
-# 2. Dependencies
-COPY package*.json ./
-RUN npm ci
-
-# 3. Build Source Code
-COPY . .
-RUN npm run build
-
-# 4. Expose Port & Run
-EXPOSE 3000
-CMD ["npm", "start"]
-\`\`\`
-
-### Common Docker Commands:
-\`\`\`bash
-# Build an image
-docker build -t my-app:v1 .
-
-# Run container on port 3000
-docker run -d -p 3000:3000 --name my-running-app my-app:v1
-
-# View running containers
-docker ps
-
-# Stop container
-docker stop my-running-app
-\`\`\``;
-    }
-  },
-
-  // 4. Python vs JavaScript
-  {
-    keywords: ['python', 'javascript', 'python vs javascript', 'js vs python', 'programming language'],
-    title: 'Python vs JavaScript: In-Depth Comparison',
-    generateResponse: (prompt, isTamil) => {
-      return `# 🐍 Python vs 🟨 JavaScript: Complete Comparison
-
----
-
-## 1. 📌 Overview
-* **JavaScript:** The undisputed language of the Web. Runs in all modern browsers and on servers via Node.js / Deno / Bun. Powers dynamic interactive frontend UIs and fullstack architectures.
-* **Python:** The undisputed language of **Data Science, Artificial Intelligence / Machine Learning, Automation, and Scientific Computing**. Known for readable, clean syntax.
-
----
-
-## 2. 📊 Comparison Table
+## 2. 📊 Comparison
 
 | Feature | Python | JavaScript |
 | :--- | :--- | :--- |
-| **Primary Domains** | AI/ML, Data Analysis, Backend (FastAPI, Django), Scripting | Frontend (React, Vue), Fullstack Web (Node, Next.js), Mobile (React Native) |
-| **Typing System** | Dynamically & Strongly typed | Dynamically & Weakly typed (TypeScript adds static typing) |
-| **Concurrency** | Asyncio / Multi-threading (GIL limitation) | Single-threaded Event Loop (Asynchronous Non-blocking I/O) |
-| **Package Manager** | pip / uv / poetry (PyPI) | npm / pnpm / yarn (npm registry) |
-| **Learning Curve** | Extremely beginner-friendly, clean indentation | Easy to start, complex async/prototype quirks |
+| **Syntax** | Romba simple & English mari irukkum | Curly brackets \`{}\` & modern syntax |
+| **Primary Domain** | AI, ML, Data Science, Scripting | Web Browsers, Frontend & Backend (Node.js) |
+| **Speed** | Moderate (Interpreted) | ⚡ Very Fast (V8 Engine) |
+| **Popular Frameworks** | Django, FastAPI, PyTorch, TensorFlow | React, Next.js, Express, Vue |
+
+Python or JavaScript-la code start panna roadmap venuma? Sollunga, step-by-step guide tharen! 🚀`;
+      }
+
+      return `# 🐍 Python vs JavaScript: Full Guide & Comparison
 
 ---
 
-## 3. 🎯 Summary: Which should you learn?
-* Learn **JavaScript / TypeScript** if you want to become a **Frontend / Full-Stack Web Developer**.
-* Learn **Python** if you want to work in **AI, Machine Learning, Data Science, Cyber Security, or Automation**.`;
+## 1. 🎯 Overview & Use Cases
+* **JavaScript:** The undisputed language of the web. Essential for Frontend (React, Vue), Backend (Node.js), and Cross-Platform Apps (React Native).
+* **Python:** The undisputed king of AI, Machine Learning, Data Engineering, and Backend Automation. Clean, readable syntax with massive scientific ecosystem.`;
+    }
+  },
+
+  // 4. Docker & Containers
+  {
+    keywords: ['docker', 'container', 'kubernetes', 'docker vs vm', 'dockerfile', 'docker compose'],
+    title: 'Docker and Containers: Complete Guide',
+    generateResponse: (prompt, isTanglish) => {
+      if (isTanglish) {
+        return `# 🐳 Docker — Super Simple Tanglish Explanation
+
+---
+
+## 1. 📌 Docker na enna? Why we need it?
+Namma developers face panra common problem:  
+> *"En laptop-la code nalla work aaguthu bro, aana server / unga computer-la error varudhu!"* 😅
+
+Indha problem-ah fix panna vandhadhu thaan **Docker**!
+
+* Docker ungaloda **Code + Node.js/Python version + Libraries + Settings** ellathayum oru box (Container) kulla pack pannidum.
+* Andha Container-ai endha computer or cloud server-la run pannalum **100% same-aa error illama work aagum**!
+
+---
+
+## 2. 🛠️ Important Docker Commands:
+\`\`\`bash
+# Docker image build panna
+docker build -t my-app .
+
+# Container run panna
+docker run -p 3000:3000 my-app
+
+# Running containers check panna
+docker ps
+\`\`\`
+
+Docker setup panna ungal project-ku Dockerfile venuma? Sollunga, ready panni tharen! 🚀`;
+      }
+
+      return `# 🐳 Docker & Containers: The Complete Guide
+
+Docker packages application code, runtime, system tools, libraries, and configurations together into lightweight containers so the app runs consistently across any environment.`;
     }
   },
 
@@ -358,7 +443,7 @@ docker stop my-running-app
   {
     keywords: ['rest api', 'graphql', 'grpc', 'api design', 'rest vs graphql'],
     title: 'API Architectures: REST vs GraphQL vs gRPC',
-    generateResponse: (prompt, isTamil) => {
+    generateResponse: (prompt, isTanglish) => {
       return `# 🔌 API Architectures: REST vs GraphQL vs gRPC
 
 ---
